@@ -1,0 +1,36 @@
+<root>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <data name="AppTitle" xml:space="preserve">
+        <value>స్థానికీకరణ ఉదాహరణ</value>
+    </data>
+    <data name="EmailLabel" xml:space="preserve">
+        <value>మీ ఇమెయిల్</value>
+    </data>
+    <data name="NameLabel" xml:space="preserve">
+        <value>మీ పేరు</value>
+    </data>
+    <data name="GetEnv" xml:space="preserve">
+        <value>పర్యావరణాన్ని పొందండి</value>
+    </data>
+    <data name="PhoneLabel" xml:space="preserve">
+        <value>ఫోను నంబరు</value>
+    </data>
+    <data name="SubmitLabel" xml:space="preserve">
+        <value>సమర్పించండి</value>
+    </data>
+</root>

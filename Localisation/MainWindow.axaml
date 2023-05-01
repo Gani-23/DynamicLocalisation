@@ -1,0 +1,39 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" 
+        d:DesignWidth="400" d:DesignHeight="600"
+        MinHeight="600" MinWidth="400"
+        MaxHeight="600" MaxWidth="400"
+        x:Class="Localisation.MainWindow"
+        xmlns:loc="clr-namespace:Localisation.Loc"
+        xmlns:viewModels="clr-namespace:Localisation.ViewModels"
+        Title="{loc:Lang AppTitle}"
+        x:DataType="viewModels:MainWindowViewModel">
+        <Window.DataContext>
+                <viewModels:MainWindowViewModel/>
+        </Window.DataContext>
+    <Grid>
+    <StackPanel Margin="20,20,20,0">
+        <Grid RowDefinitions="*,*">
+            <TextBlock Text="{loc:Lang NameLabel}" />
+            <TextBox Grid.Row="0" Margin="0,20,0,0"/>
+        </Grid>
+        <Grid RowDefinitions="*,*">
+            <TextBlock Text="{loc:Lang PhoneLabel}" Margin="0,5,0,0"/>
+            <TextBox Grid.Row="1" Margin="0,5,0,0"/>
+        </Grid>
+        <Grid RowDefinitions="*,*">
+            <TextBlock Text="{loc:Lang EmailLabel}" Margin="0,5,0,0"/>
+            <TextBox Grid.Row="1" Margin="0,5,0,0"/>
+        </Grid>
+        <Grid HorizontalAlignment="Center" Margin="0,35,0,0">
+            <Button Content="{loc:Lang SubmitLabel}"></Button>
+        </Grid>
+    </StackPanel>
+        <ComboBox VerticalAlignment="Bottom" HorizontalAlignment="Right" PlaceholderText="Select Language" Items="{Binding AvailableLanguages}"
+                  SelectedItem="{Binding CurrentLanguage}" Margin="0,0,20,20"/>
+   </Grid>
+    
+</Window>
