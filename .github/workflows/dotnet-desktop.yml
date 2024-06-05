@@ -11,13 +11,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout Repository
-      uses: actions/checkout@v2
-      with:
-        repository: "gani-23/DynamicLocalisation"
-        ref: main
+      uses: actions/checkout@v3
 
     - name: Setup .NET SDK
-      uses: actions/setup-dotnet@v1
+      uses: actions/setup-dotnet@v3
       with:
         dotnet-version: '6.x'
 
@@ -31,7 +28,7 @@ jobs:
       run: dotnet build --configuration Release --runtime win-x86 --output ./releases/x86 Localisation/Localisation.csproj
 
     - name: Upload Artifacts
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: app_release
         path: ./releases
@@ -55,8 +52,11 @@ jobs:
     needs: create_release
     runs-on: ubuntu-latest
     steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+
     - name: Download Artifacts
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v3
       with:
         name: app_release
 
