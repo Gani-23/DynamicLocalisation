@@ -22,16 +22,16 @@ jobs:
       run: dotnet restore Localisation/Localisation.csproj
 
     - name: Build Application x64
-      run: dotnet build --configuration Release --runtime win-x64 --output ./releases/x64 Localisation/Localisation.csproj
+      run: dotnet publish --configuration Release --runtime win-x64 --output ./artifacts/x64/MyApp Localisation/Localisation.csproj
 
     - name: Build Application x86
-      run: dotnet build --configuration Release --runtime win-x86 --output ./releases/x86 Localisation/Localisation.csproj
+      run: dotnet publish --configuration Release --runtime win-x86 --output ./artifacts/x86/MyApp Localisation/Localisation.csproj
 
     - name: Upload Artifacts
       uses: actions/upload-artifact@v3
       with:
-        name: app_release
-        path: ./releases
+        name: app_artifacts
+        path: ./artifacts
 
   create_release:
     needs: build_and_release
@@ -65,7 +65,7 @@ jobs:
     - name: Download Artifacts
       uses: actions/download-artifact@v3
       with:
-        name: app_release
+        name: app_artifacts
 
     - name: Upload x64 Artifact
       uses: actions/upload-release-asset@v1
@@ -73,9 +73,9 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUBTOKEN }}
       with:
         upload_url: ${{ needs.create_release.outputs.upload_url }}
-        asset_path: ./app_release/x64/app_release_x64.zip
-        asset_name: app_release_x64.zip
-        asset_content_type: application/zip
+        asset_path: ./app_artifacts/x64/MyApp/MyApp.exe
+        asset_name: MyApp_x64.exe
+        asset_content_type: application/vnd.microsoft.portable-executable
 
     - name: Upload x86 Artifact
       uses: actions/upload-release-asset@v1
@@ -83,13 +83,13 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUBTOKEN }}
       with:
         upload_url: ${{ needs.create_release.outputs.upload_url }}
-        asset_path: ./app_release/x86/app_release_x86.zip
-        asset_name: app_release_x86.zip
-        asset_content_type: application/zip
+        asset_path: ./app_artifacts/x86/MyApp/MyApp.exe
+        asset_name: MyApp_x86.exe
+        asset_content_type: application/vnd.microsoft.portable-executable
 
   cleanup:
     needs: [upload_release]
     runs-on: ubuntu-latest
     steps:
     - name: Cleanup
-      run: rm -rf ./releases
+      run: rm -rf ./artifacts
