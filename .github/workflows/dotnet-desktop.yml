@@ -71,7 +71,7 @@ jobs:
       id: create_release
       uses: actions/create-release@v1
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUBTOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         tag_name: v1.0.0 # You can dynamically set this based on versioning
         release_name: Release v1.0.0 # You can dynamically set this based on versioning
@@ -83,13 +83,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Get Release URL
+      id: get_release_url
+      run: echo "::set-output name=url::${{ steps.create_release.outputs.upload_url }}"
+
     - name: Upload x64 Artifact
       id: upload_release_x64
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        upload_url: ${{ steps.get_release_url.outputs.url }}
         asset_path: ./releases/x64
         asset_name: app_release_x64.zip
         asset_content_type: application/zip
@@ -99,13 +103,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Get Release URL
+      id: get_release_url
+      run: echo "::set-output name=url::${{ steps.create_release.outputs.upload_url }}"
+
     - name: Upload x86 Artifact
       id: upload_release_x86
       uses: actions/upload-release-asset@v1
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUBTOKEN }}
       with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        upload_url: ${{ steps.get_release_url.outputs.url }}
         asset_path: ./releases/x86
         asset_name: app_release_x86.zip
         asset_content_type: application/zip
@@ -116,3 +124,4 @@ jobs:
     steps:
     - name: Cleanup
       run: rm -rf ./releases
+    
