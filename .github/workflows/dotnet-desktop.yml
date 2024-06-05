@@ -6,15 +6,19 @@ on:
       - main
 
 jobs:
-  build:
+  build_and_release_x64:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [windows-latest]
+        architecture: [x64]
 
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v2
       with:
         repository: "gani-23/DynamicLocalisation"
-        ref: main # or whatever your branch name is
+        ref: main
 
     - name: Setup .NET SDK
       uses: actions/setup-dotnet@v1
@@ -24,24 +28,91 @@ jobs:
     - name: Restore Dependencies
       run: dotnet restore Localisation/Localisation.csproj
 
-    - name: Build Application
-      run: dotnet build --configuration Release Localisation/Localisation.csproj
+    - name: Build Application x64
+      run: dotnet build --configuration Release --runtime win-x64 --output ./releases/x64 Localisation/Localisation.csproj
 
-    - name: Publish Application
-      run: dotnet publish -c Release -o ./releases Localisation/Localisation.csproj
+    - name: Publish Application x64
+      run: dotnet publish -c Release -r win-x64 -o ./releases/x64 Localisation/Localisation.csproj
 
-    - name: Create Release Archive
-      run: |
-        cd releases
-        zip -r app_release.zip ./*
-        mv app_release.zip ../
-      shell: bash
+  build_and_release_x86:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [windows-latest]
+        architecture: [x86]
 
-    - name: Upload Release Artifact
-      uses: actions/upload-artifact@v2
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
       with:
-        name: app-release
-        path: ./app_release.zip
+        repository: "gani-23/DynamicLocalisation"
+        ref: main
 
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '6.x' # .NET 6.0 version
+
+    - name: Restore Dependencies
+      run: dotnet restore Localisation/Localisation.csproj
+
+    - name: Build Application x86
+      run: dotnet build --configuration Release --runtime win-x86 --output ./releases/x86 Localisation/Localisation.csproj
+
+    - name: Publish Application x86
+      run: dotnet publish -c Release -r win-x86 -o ./releases/x86 Localisation/Localisation.csproj
+
+  create_release:
+    needs: [build_and_release_x64, build_and_release_x86]
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: v1.0.0 # You can dynamically set this based on versioning
+        release_name: Release v1.0.0 # You can dynamically set this based on versioning
+        draft: false
+        prerelease: false
+
+  upload_x64:
+    needs: create_release
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Upload x64 Artifact
+      id: upload_release_x64
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./releases/x64
+        asset_name: app_release_x64.zip
+        asset_content_type: application/zip
+
+  upload_x86:
+    needs: create_release
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Upload x86 Artifact
+      id: upload_release_x86
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./releases/x86
+        asset_name: app_release_x86.zip
+        asset_content_type: application/zip
+
+  cleanup:
+    runs-on: ubuntu-latest
+    needs: [upload_x64, upload_x86]
+    steps:
     - name: Cleanup
-      run: rm -rf ./releases ./app_release.zip
+      run: rm -rf ./releases
